@@ -8,7 +8,6 @@ package hbasenew;
 import java.sql.Timestamp;
 import java.util.Map;
 import org.apache.hadoop.hbase.filter.ColumnRangeFilter;
-import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.util.Bytes;
 
 /**
@@ -40,14 +39,12 @@ ColumnRangeFilter filter = new ColumnRangeFilter(Bytes.toBytes(Long.toString(sta
     return result;
   
     }
-
     /**
      * @return the tableName
      */
     public static String getTableName() {
         return tableName;
     }
-
     /**
      * @param aTableName the tableName to set
      */
