@@ -220,17 +220,14 @@ public class HBaseUtil {
             }
             return result;
         }
-           public static Map<String, String> Scanmsg(String tableName,  String family ,Filter kof) {
+           public static Map<String, String> Scanmsg(String tableName,  String family ,String start,String end) {
             Map<String, String> result = null ;
             try {
                 Table t = getCon().getTable(TableName.valueOf(tableName));
                 Scan scan = new Scan(); 
-          
-     
-                scan.setFilter(kof);
-               
+          scan.setStartRow(Bytes.toBytes(start));
+          scan.setStopRow(Bytes.toBytes(end));    
                 ResultScanner  rs = t.getScanner(scan);
-               rs.next().listCells();
                  for (Result r : rs) {
                 System.out.println("rowkey:" + new String(r.getRow()));
                 for (KeyValue keyValue : r.raw()) {

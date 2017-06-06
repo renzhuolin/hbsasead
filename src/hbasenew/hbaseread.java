@@ -67,7 +67,7 @@ ColumnRangeFilter filter = new ColumnRangeFilter(Bytes.toBytes(Long.toString(sta
 boolean maxColumnInclusive = true;
 ColumnRangeFilter filter = new ColumnRangeFilter(Bytes.toBytes(Long.toString(sta.getTime())), minColumnInclusive, Bytes.toBytes(Long.toString(sto.getTime())), maxColumnInclusive);
  Filter filter1 = new RowFilter(CompareFilter.CompareOp.LESS_OR_EQUAL,new BinaryComparator("row010".getBytes()));
-         Map<String, String> result = HBaseUtil.Getmsg("tearth", station+stationpoint+item+rate, "date",filter);
+         Map<String, String> result = HBaseUtil.Getmsg("tearth", station+stationpoint+item+rate, "date",filter1);
     return result;
   
     }
