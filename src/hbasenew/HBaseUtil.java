@@ -11,6 +11,7 @@ import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
+import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Admin;
 import org.apache.hadoop.hbase.client.Connection;
@@ -19,6 +20,7 @@ import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.filter.Filter;
@@ -213,6 +215,32 @@ public class HBaseUtil {
                 for (Cell cell : cs) {
                     result.put(Bytes.toString(CellUtil.cloneQualifier(cell)), Bytes.toString(CellUtil.cloneValue(cell)));
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
+           public static Map<String, String> Scanmsg(String tableName,  String family ,Filter kof) {
+            Map<String, String> result = null ;
+            try {
+                Table t = getCon().getTable(TableName.valueOf(tableName));
+                Scan scan = new Scan(); 
+          
+     
+                scan.setFilter(kof);
+               
+                ResultScanner  rs = t.getScanner(scan);
+               rs.next().listCells();
+                 for (Result r : rs) {
+                System.out.println("rowkey:" + new String(r.getRow()));
+                for (KeyValue keyValue : r.raw()) {
+                    System.out.println("列族:" + new String(keyValue.getFamily())
+                            + " 列:" + new String(keyValue.getQualifier()) + ":"
+                            + new String(keyValue.getValue()));
+                }
+            }
+              
+               
             } catch (IOException e) {
                 e.printStackTrace();
             }
