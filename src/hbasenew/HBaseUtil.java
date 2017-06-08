@@ -208,8 +208,8 @@ public class HBaseUtil {
             }
             return result;
         }
-         public static StringBuilder    Getmsg(String tableName, String rowKey, String family ,Filter kof) {
-           StringBuilder result = new StringBuilder();
+         public static Result    Getmsg(String tableName, String rowKey, String family ,Filter kof) {
+         
             try {
                 Table t = getCon().getTable(TableName.valueOf(tableName));
      
@@ -218,22 +218,13 @@ public class HBaseUtil {
                get.setFilter(kof);//System.out.println( "weqeqw" );
                 Result r = t.get(get);//System.out.println( "qqqqq" );
                 System.out.println(r.size());
-                List<Cell> cs = r.listCells();           
                
-                
-                            //System.out.println( Bytes.toString(CellUtil.cloneValue(cell)) );
-                    cs.forEach((Cell cell) -> {                          
-                    String start= Bytes.toString(CellUtil.cloneQualifier(cell));
-                    start = start.substring(0, 4)+"-"+start.substring(4, 6)+"-"+start.substring(6, 8)+" "+start.substring(8, 10)+":"+start.substring(10, 12)+":"+"00";
-                    long time = Timestamp.valueOf(start).getTime();                  
-                   result.append((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(time)).append(",").append(Bytes.toString(CellUtil.cloneValue(cell))).append("\n");
-               });
                     t.close();
-                   
+                 return r;   
             } catch (IOException e) {
               System.out.println("数据查询异常"+e);        
             }
-            return result;
+             return null;  
         }
            public static StringBuilder Scanmsg(String tableName,  String family ,String sta,String end) {
            StringBuilder result = new StringBuilder();

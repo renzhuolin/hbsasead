@@ -6,7 +6,12 @@
 package hbasenew;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Map;
+import org.apache.hadoop.hbase.Cell;
+import org.apache.hadoop.hbase.CellUtil;
+import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.filter.BinaryComparator;
 import org.apache.hadoop.hbase.filter.ColumnRangeFilter;
 import org.apache.hadoop.hbase.filter.CompareFilter;
@@ -42,7 +47,15 @@ boolean maxColumnInclusive = true;
 ColumnRangeFilter filter = new ColumnRangeFilter(Bytes.toBytes(Long.toString(sta.getTime())), minColumnInclusive, Bytes.toBytes(Long.toString(sto.getTime())), maxColumnInclusive);
     //ColumnRangeFilter filter = new ColumnRangeFilter(Bytes.toBytes("1325347200000"), minColumnInclusive, Bytes.toBytes("1383148800000"), maxColumnInclusive);
         //Map<String, String> result = HBaseUtil.Getmsg(getTableName(), station+stationpoint+item+rate, "date",filter);
-         StringBuilder result = HBaseUtil.Getmsg(getTableName(), station+stationpoint+item+rate, "date",filter);
+         Result r = HBaseUtil.Getmsg(getTableName(), station+stationpoint+item+rate, "date",filter);
+               
+               
+                     StringBuilder result =new StringBuilder();                    
+                     r.listCells().forEach((Cell cell) -> {                          
+                    String date = Bytes.toString(CellUtil.cloneQualifier(cell)); 
+                    Long aa =  new Long(date);   
+                   result.append((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(aa)).append(",").append(Bytes.toString(CellUtil.cloneValue(cell))).append("\n");
+               });
     return result;
   
     }
@@ -80,7 +93,17 @@ boolean maxColumnInclusive = true;
 ColumnRangeFilter filter = new ColumnRangeFilter(Bytes.toBytes(start), minColumnInclusive, Bytes.toBytes(end), maxColumnInclusive);
     //ColumnRangeFilter filter = new ColumnRangeFilter(Bytes.toBytes("1325347200000"), minColumnInclusive, Bytes.toBytes("1383148800000"), maxColumnInclusive);
         //Map<String, String> result = HBaseUtil.Getmsg(getTableName(), station+stationpoint+item+rate, "date",filter);
-         StringBuilder result = HBaseUtil.Getmsg(getTableName(), station+stationpoint+item+rate, "date",filter);
+         Result r = HBaseUtil.Getmsg(getTableName(), station+stationpoint+item+rate, "date",filter);
+          List<Cell> cs = r.listCells();           
+               
+                StringBuilder result =new StringBuilder();
+                            //System.out.println( Bytes.toString(CellUtil.cloneValue(cell)) );
+                    cs.forEach((Cell cell) -> {                          
+                    String date= Bytes.toString(CellUtil.cloneQualifier(cell));
+                    date = date.substring(0, 4)+"-"+date.substring(4, 6)+"-"+date.substring(6, 8)+" "+date.substring(8, 10)+":"+date.substring(10, 12)+":"+"00";
+                    long time = Timestamp.valueOf(date).getTime();                  
+                   result.append((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(time)).append(",").append(Bytes.toString(CellUtil.cloneValue(cell))).append("\n");
+               });
     return result;
   
     }

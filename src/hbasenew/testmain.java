@@ -47,7 +47,7 @@ Querymsg da =new Querymsg();
         da.setItem("4112");
         da.setStationpoint("2");
         da.setZoom("1");     
-        StringBuilder result=hbaseread.query1(da);
+        StringBuilder result=hbaseread.query(da);
        System.out.println("结果是的： " + result);
        
 //        result.entrySet().stream().forEach((entry) -> {
