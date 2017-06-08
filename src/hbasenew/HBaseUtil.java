@@ -37,7 +37,9 @@ public class HBaseUtil {
     // 初始化连接
     static {
         conf = HBaseConfiguration.create(); // 获得配制文件对象
-        conf.set("hbase.zookeeper.quorum", "172.17.81.236");
+      conf.set("hbase.zookeeper.quorum", "bigdata-1,bigdata-2,bigdata-3,bigdata-4,bigdata-5,bigdata-6");
+    // conf.addResource("hbase-site.xml");
+    
         try {
             con = ConnectionFactory.createConnection(conf);// 获得连接对象
         } catch (IOException e) {
