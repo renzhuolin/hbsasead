@@ -208,7 +208,7 @@ public class HBaseUtil {
      
                 Get get = new Get(Bytes.toBytes(rowKey));
                 get.addFamily(Bytes.toBytes(family));
-                //get.setFilter(kof);System.out.println( "weqeqw" );
+               get.setFilter(kof);System.out.println( "weqeqw" );
                 Result r = t.get(get);System.out.println( "qqqqq" );
                 List<Cell> cs = r.listCells();
                 result = cs.size() > 0 ? new HashMap<String, String>() : result; 

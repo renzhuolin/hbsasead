@@ -34,7 +34,7 @@ public class MyHbaseApi {
             //1.获得配置文件对象
             Configuration conf=HBaseConfiguration.create();
                 //设置配置参数
-            conf.set("hbase.zookeeper.quorum", "172.17.81.238");
+            conf.set("hbase.zookeeper.quorum", "172.17.81.236");
             //2.建立连接
              con=ConnectionFactory.createConnection(conf);
             //3.获得会话
