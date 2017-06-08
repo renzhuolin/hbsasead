@@ -45,7 +45,8 @@ Querymsg da =new Querymsg();
         da.setItem("4112");
         da.setStationpoint("2");
         da.setZoom("1");     
-        Map<String, String> result=hbaseread.query(da);
+        Map<String, String> result=hbaseread.query1(da);
+        System.out.print(result);
     }
     
 }

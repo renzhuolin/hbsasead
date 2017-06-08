@@ -32,7 +32,7 @@ public class HBaseUtil {
     // 初始化连接
     static {
         conf = HBaseConfiguration.create(); // 获得配制文件对象
-        conf.set("hbase.zookeeper.quorum", "172.17.81.238");
+        conf.set("hbase.zookeeper.quorum", "172.17.81.239");
         try {
             con = ConnectionFactory.createConnection(conf);// 获得连接对象
         } catch (IOException e) {
@@ -205,14 +205,16 @@ public class HBaseUtil {
             Map<String, String> result = null ;
             try {
                 Table t = getCon().getTable(TableName.valueOf(tableName));
-                Scan scan = new Scan(); 
+     
                 Get get = new Get(Bytes.toBytes(rowKey));
                 get.addFamily(Bytes.toBytes(family));
-                get.setFilter(kof);
-                Result r = t.get(get);
+                //get.setFilter(kof);System.out.println( "weqeqw" );
+                Result r = t.get(get);System.out.println( "qqqqq" );
                 List<Cell> cs = r.listCells();
-                result = cs.size() > 0 ? new HashMap<String, String>() : result;
+                result = cs.size() > 0 ? new HashMap<String, String>() : result; 
+                
                 for (Cell cell : cs) {
+                    System.out.println( Bytes.toString(CellUtil.cloneValue(cell)) );
                     result.put(Bytes.toString(CellUtil.cloneQualifier(cell)), Bytes.toString(CellUtil.cloneValue(cell)));
                 }
             } catch (IOException e) {
@@ -228,12 +230,17 @@ public class HBaseUtil {
           scan.setStartRow(Bytes.toBytes(start));
           scan.setStopRow(Bytes.toBytes(end));    
                 ResultScanner  rs = t.getScanner(scan);
+                List<Cell> cs ;
                  for (Result r : rs) {
-                System.out.println("rowkey:" + new String(r.getRow()));
-                for (KeyValue keyValue : r.raw()) {
-                    System.out.println("列族:" + new String(keyValue.getFamily())
-                            + " 列:" + new String(keyValue.getQualifier()) + ":"
-                            + new String(keyValue.getValue()));
+//                System.out.println("rowkey:" + new String(r.getRow()));
+//                     System.out.println("rowkey:" + r.listCells().toString());
+                        cs = r.listCells();
+                result = cs.size() > 0 ? new HashMap<>() : result;
+                for (Cell cell : cs) {
+                    String ti = new String(r.getRow());
+                  ti=  ti.substring(11);
+                    // System.out.println( ti+"     "+Bytes.toString(CellUtil.cloneValue(cell)) );
+                    result.put(ti , Bytes.toString(CellUtil.cloneValue(cell)));
                 }
             }
               

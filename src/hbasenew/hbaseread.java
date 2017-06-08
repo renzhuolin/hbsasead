@@ -57,17 +57,10 @@ ColumnRangeFilter filter = new ColumnRangeFilter(Bytes.toBytes(Long.toString(sta
                 String stationpoint = dbb.getStationpoint();
                 String rate = dbb.getZoom();
                 String aggregator = dbb.getAggregator();
-       Timestamp sta ;
-         Timestamp sto ;
-         start = start.substring(0, 4)+"-"+start.substring(4, 6)+"-"+start.substring(6, 8)+" "+start.substring(8, 10)+":"+start.substring(10, 12)+":"+"00";
-      sta = Timestamp.valueOf(start);
-       end = end.substring(0, 4)+"-"+end.substring(4, 6)+"-"+end.substring(6, 8)+" "+end.substring(8, 10)+":"+end.substring(10, 12)+":"+"00";
-      sto = Timestamp.valueOf(end);
-   boolean minColumnInclusive = true;
-boolean maxColumnInclusive = true;
-ColumnRangeFilter filter = new ColumnRangeFilter(Bytes.toBytes(Long.toString(sta.getTime())), minColumnInclusive, Bytes.toBytes(Long.toString(sto.getTime())), maxColumnInclusive);
- Filter filter1 = new RowFilter(CompareFilter.CompareOp.LESS_OR_EQUAL,new BinaryComparator("row010".getBytes()));
-         Map<String, String> result = HBaseUtil.Getmsg("tearth", station+stationpoint+item+rate, "date",filter1);
+               start=   station+stationpoint+item+rate+start;
+                end=   station+stationpoint+item+rate+end;
+             Map<String, String> result =  HBaseUtil.Scanmsg("tearth","data", start, end);
+   
     return result;
   
     }
