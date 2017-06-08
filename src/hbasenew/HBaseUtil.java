@@ -32,7 +32,7 @@ public class HBaseUtil {
     // 初始化连接
     static {
         conf = HBaseConfiguration.create(); // 获得配制文件对象
-        conf.set("hbase.zookeeper.quorum", "172.17.81.239");
+        conf.set("hbase.zookeeper.quorum", "172.17.81.236");
         try {
             con = ConnectionFactory.createConnection(conf);// 获得连接对象
         } catch (IOException e) {
