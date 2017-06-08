@@ -43,15 +43,17 @@ Querymsg da =new Querymsg();
         da.setStation("53001");
       
         da.setStarttime("201001010000"); 
-          da.setEndtime("201010310000");
+          da.setEndtime("201001310000");
         da.setItem("4112");
         da.setStationpoint("2");
         da.setZoom("1");     
-        Map<String, String> result=hbaseread.query(da);
-         System.out.println("结果是的： " + result);
-         
-      
-        assertNotNull(result);
+        StringBuilder result=hbaseread.query1(da);
+       System.out.println("结果是的： " + result);
+       
+//        result.entrySet().stream().forEach((entry) -> {
+//            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+//        });  
+//        assertNotNull(result);
     }
     
 }

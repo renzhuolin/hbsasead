@@ -1,9 +1,13 @@
 package hbasenew;
 
+import static com.kenai.jaffl.provider.jffi.CodegenUtils.c;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.Cell;
@@ -25,6 +29,7 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.util.Bytes;
+import static org.jruby.util.CodegenUtils.c;
 
 public class HBaseUtil {
     private static Configuration conf;
@@ -201,48 +206,52 @@ public class HBaseUtil {
             }
             return result;
         }
-         public static Map<String, String> Getmsg(String tableName, String rowKey, String family ,Filter kof) {
-            Map<String, String> result = null ;
+         public static StringBuilder    Getmsg(String tableName, String rowKey, String family ,Filter kof) {
+           StringBuilder result = new StringBuilder();
             try {
                 Table t = getCon().getTable(TableName.valueOf(tableName));
      
                 Get get = new Get(Bytes.toBytes(rowKey));
                 get.addFamily(Bytes.toBytes(family));
-               get.setFilter(kof);System.out.println( "weqeqw" );
-                Result r = t.get(get);System.out.println( "qqqqq" );
-                List<Cell> cs = r.listCells();
-                result = cs.size() > 0 ? new HashMap<String, String>() : result; 
+               get.setFilter(kof);//System.out.println( "weqeqw" );
+                Result r = t.get(get);//System.out.println( "qqqqq" );
+                System.out.println(r.size());
+                List<Cell> cs = r.listCells();           
+               
                 
-                for (Cell cell : cs) {
-                    System.out.println( Bytes.toString(CellUtil.cloneValue(cell)) );
-                    result.put(Bytes.toString(CellUtil.cloneQualifier(cell)), Bytes.toString(CellUtil.cloneValue(cell)));
-                }
+                            //System.out.println( Bytes.toString(CellUtil.cloneValue(cell)) );
+                    cs.forEach((Cell cell) -> {                          
+                    String start= Bytes.toString(CellUtil.cloneQualifier(cell));
+                    start = start.substring(0, 4)+"-"+start.substring(4, 6)+"-"+start.substring(6, 8)+" "+start.substring(8, 10)+":"+start.substring(10, 12)+":"+"00";
+                    long time = Timestamp.valueOf(start).getTime();                  
+                   result.append((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(time)).append(",").append(Bytes.toString(CellUtil.cloneValue(cell))).append("\n");
+               });
+                    t.close();
+                   
             } catch (IOException e) {
-                e.printStackTrace();
+              System.out.println("数据查询异常"+e);        
             }
             return result;
         }
-           public static Map<String, String> Scanmsg(String tableName,  String family ,String start,String end) {
-            Map<String, String> result = null ;
+           public static StringBuilder Scanmsg(String tableName,  String family ,String sta,String end) {
+           StringBuilder result = new StringBuilder();
             try {
                 Table t = getCon().getTable(TableName.valueOf(tableName));
                 Scan scan = new Scan(); 
-          scan.setStartRow(Bytes.toBytes(start));
+          scan.setStartRow(Bytes.toBytes(sta));
           scan.setStopRow(Bytes.toBytes(end));    
                 ResultScanner  rs = t.getScanner(scan);
-                List<Cell> cs ;
-                 for (Result r : rs) {
-//                System.out.println("rowkey:" + new String(r.getRow()));
-//                     System.out.println("rowkey:" + r.listCells().toString());
-                        cs = r.listCells();
-                result = cs.size() > 0 ? new HashMap<>() : result;
-                for (Cell cell : cs) {
-                    String ti = new String(r.getRow());
-                  ti=  ti.substring(11);
-                    // System.out.println( ti+"     "+Bytes.toString(CellUtil.cloneValue(cell)) );
-                    result.put(ti , Bytes.toString(CellUtil.cloneValue(cell)));
-                }
-            }
+                rs.forEach((Result r) -> {               
+                  r.listCells() .forEach((Cell cell) -> {
+                      // System.out.println(Bytes.toString( CellUtil.cloneRow(cell)));
+                        String start = Bytes.toString( CellUtil.cloneRow(cell)).substring(11);                
+                        start = start.substring(0, 4)+"-"+start.substring(4, 6)+"-"+start.substring(6, 8)+" "+start.substring(8, 10)+":"+start.substring(10, 12)+":"+"00";
+                        long time = Timestamp.valueOf(start).getTime();
+                        result.append((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(time)).append(",").append(Bytes.toString(CellUtil.cloneValue(cell))).append("\n");
+                    });
+                });
+              
+            
               
                
             } catch (IOException e) {

@@ -23,7 +23,7 @@ public class hbaseread {
      /*
         rowkey存非时间信息    
     */
-    public static Map<String, String> query(Querymsg dbb){
+    public static StringBuilder query(Querymsg dbb){
                 String start = dbb.getStarttime();
                 String end = dbb.getEndtime();
                 String item = dbb.getItem();
@@ -42,14 +42,14 @@ boolean maxColumnInclusive = true;
 ColumnRangeFilter filter = new ColumnRangeFilter(Bytes.toBytes(Long.toString(sta.getTime())), minColumnInclusive, Bytes.toBytes(Long.toString(sto.getTime())), maxColumnInclusive);
     //ColumnRangeFilter filter = new ColumnRangeFilter(Bytes.toBytes("1325347200000"), minColumnInclusive, Bytes.toBytes("1383148800000"), maxColumnInclusive);
         //Map<String, String> result = HBaseUtil.Getmsg(getTableName(), station+stationpoint+item+rate, "date",filter);
-         Map<String, String> result = HBaseUtil.Getmsg(getTableName(), station+stationpoint+item+rate, "date",filter);
+         StringBuilder result = HBaseUtil.Getmsg(getTableName(), station+stationpoint+item+rate, "date",filter);
     return result;
   
     }
     /*
         rowkey存所有信息    
     */
-     public static Map<String, String> query1(Querymsg dbb){
+     public static StringBuilder query1(Querymsg dbb){
                 String start = dbb.getStarttime();
                 String end = dbb.getEndtime();
                 String item = dbb.getItem();
@@ -59,8 +59,28 @@ ColumnRangeFilter filter = new ColumnRangeFilter(Bytes.toBytes(Long.toString(sta
                 String aggregator = dbb.getAggregator();
                start=   station+stationpoint+item+rate+start;
                 end=   station+stationpoint+item+rate+end;
-             Map<String, String> result =  HBaseUtil.Scanmsg("tearth","data", start, end);
+         StringBuilder result =  HBaseUtil.Scanmsg("tearth","data", start, end);
    
+    return result;
+  
+    }
+      public static StringBuilder query3(Querymsg dbb){
+                String start = dbb.getStarttime();
+                String end = dbb.getEndtime();
+                String item = dbb.getItem();
+                String station = dbb.getStation();
+                String stationpoint = dbb.getStationpoint();
+                String rate = dbb.getZoom();
+                String aggregator = dbb.getAggregator();
+      
+      
+    
+   boolean minColumnInclusive = true;
+boolean maxColumnInclusive = true;
+ColumnRangeFilter filter = new ColumnRangeFilter(Bytes.toBytes(start), minColumnInclusive, Bytes.toBytes(end), maxColumnInclusive);
+    //ColumnRangeFilter filter = new ColumnRangeFilter(Bytes.toBytes("1325347200000"), minColumnInclusive, Bytes.toBytes("1383148800000"), maxColumnInclusive);
+        //Map<String, String> result = HBaseUtil.Getmsg(getTableName(), station+stationpoint+item+rate, "date",filter);
+         StringBuilder result = HBaseUtil.Getmsg(getTableName(), station+stationpoint+item+rate, "date",filter);
     return result;
   
     }
