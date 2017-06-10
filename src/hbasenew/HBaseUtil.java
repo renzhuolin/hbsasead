@@ -123,7 +123,7 @@ public class HBaseUtil {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            // HBaseUtil.close();
+            //HBaseUtil.close();
         }
         return false;
     }
@@ -137,7 +137,7 @@ public class HBaseUtil {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            // HBaseUtil.close();
+           // HBaseUtil.close();
         }
         return false;
     }

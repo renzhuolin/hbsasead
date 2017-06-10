@@ -18,7 +18,7 @@ public class Hbasewrite {
 
     long totalsize = 0;
     long updatasize = 0;
-    String logpath;
+    String logpath ="F:\\固态\\";
 
     public void sendhbase(String path, int x) throws IOException {
         File file = new File(path);
@@ -46,7 +46,7 @@ public class Hbasewrite {
             System.out.println("文件总大小" + totalsize);
             Writelog.writeLog(logpath, "writeandreadhbaselog.log", "文件总大小" + totalsize);
             for (File fd1 : fd) {
-                System.out.println("已上传" + updatasize / 1024 + "总大小" + totalsize / 1024 + "已上传比例" + updatasize / totalsize);
+                System.out.println("已上传" + updatasize / 1024 + "总大小" + totalsize / 1024 + "已上传比例" + updatasize/(totalsize/100)+"%");
                 if (fd1.isFile()) {
                     try {
                         if (Post(fd1, x)) {
@@ -64,6 +64,9 @@ public class Hbasewrite {
                     sendhbase(fd1.getPath(), x);
                 }
             }
+            
+            HBaseUtil.close();
+            updatasize = 0;
         }
 
     }
@@ -311,6 +314,7 @@ public class Hbasewrite {
         try {
             while ((tempString = reader.readLine()) != null) {
                 str = tempString.split(" ");
+                put = new Put(Bytes.toBytes(rate + str[0]));
                 put.addColumn(Bytes.toBytes("data"), Bytes.toBytes("value"), Bytes.toBytes(str[1]));
                 puts.add(put);
 
