@@ -19,8 +19,8 @@ public class testmain {
     public static void main(String[] are) throws Exception {
         long start, end;
         Hbasewrite hw = new Hbasewrite();
-        String path = "F:\\固态\\TestData";
-        String logpath = "F:\\固态\\";
+        String path = "/home/hadoop/earthquakedata/TestData";
+        String logpath = "/home/hadoop/earthquakedata/";
 
         start = System.nanoTime();
         hw.sendhbase(path,1);

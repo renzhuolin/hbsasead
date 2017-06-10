@@ -18,7 +18,7 @@ public class Hbasewrite {
 
     long totalsize = 0;
     long updatasize = 0;
-    String logpath ="F:\\固态\\";
+    String logpath = "/home/hadoop/earthquakedata/";
 
     public void sendhbase(String path, int x) throws IOException {
         File file = new File(path);
