@@ -1,6 +1,7 @@
 package hbasenew;
 
 import hbasenew.file.FileSize;
+import hbasenew.file.Writelog;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -14,46 +15,53 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
 
 public class Hbasewrite {
- long totalsize=0;
- long updatasize =0;
-    
+
+    long totalsize = 0;
+    long updatasize = 0;
+    String logpath;
+
     public void sendhbase(String path, int x) throws IOException {
         File file = new File(path);
-          FileSize filesize = new FileSize();
+        FileSize filesize = new FileSize();
         if (file.isFile()) {
             try {
                 if (Post(file, x)) {
                     System.out.println("文件" + file.getPath() + "上传成功");
+                    Writelog.writeLog(logpath, "writeandreadhbaselog.log", "文件" + file.getPath() + "上传成功");
                 } else {
                     System.out.println("文件" + file.getPath() + "上传失败");
+                    Writelog.writeLog(logpath, "writeandreadhbaselog.log", "文件" + file.getPath() + "上传失败");
                 }
             } catch (InterruptedException ex) {
                 Logger.getLogger(Hbasewrite.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
-         
+
             totalsize = filesize.getfilesize(path);
             System.out.println("文件目录:" + path);
+            Writelog.writeLog(logpath, "writeandreadhbaselog.log", "文件" + "文件目录:" + path);
             File[] fd = file.listFiles();
             System.out.println("文件总个数" + fd.length);
+            Writelog.writeLog(logpath, "writeandreadhbaselog.log", "文件总个数" + fd.length);
             System.out.println("文件总大小" + totalsize);
-
+            Writelog.writeLog(logpath, "writeandreadhbaselog.log", "文件总大小" + totalsize);
             for (File fd1 : fd) {
-                   System.out.println("已上传"+updatasize/1024 +"总大小"+totalsize/1024 +"已上传比例"+updatasize/totalsize);
+                System.out.println("已上传" + updatasize / 1024 + "总大小" + totalsize / 1024 + "已上传比例" + updatasize / totalsize);
                 if (fd1.isFile()) {
                     try {
-                        if (Post(fd1, x)) {                          
+                        if (Post(fd1, x)) {
                             updatasize += fd1.length();
                             System.out.println("文件" + fd1.getPath() + "上传成功");
+                            Writelog.writeLog(logpath, "writeandreadhbaselog.log", "文件" + fd1.getPath() + "上传成功");
                         } else {
                             System.out.println("文件" + fd1.getPath() + "上传失败");
+                            Writelog.writeLog(logpath, "writeandreadhbaselog.log", "文件" + fd1.getPath() + "上传失败");
                         }
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Hbasewrite.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                }
-                else{
-                        sendhbase( fd1.getPath(),  x);
+                } else {
+                    sendhbase(fd1.getPath(), x);
                 }
             }
         }
