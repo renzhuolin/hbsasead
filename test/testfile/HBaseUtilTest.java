@@ -1,5 +1,6 @@
-package hbasenew;
+package testfile;
 
+import hbasenew.HBaseUtil;
 import static org.junit.Assert.*;
 
 import java.util.Map;

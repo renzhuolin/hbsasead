@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.filter.BinaryComparator;
 import org.apache.hadoop.hbase.filter.ColumnRangeFilter;
 import org.apache.hadoop.hbase.filter.CompareFilter;
@@ -71,7 +72,16 @@ public class hbaseread {
         String rate = dbb.getZoom();
         start = station + stationpoint + item + rate + start;
         end = station + stationpoint + item + rate + end;
-        StringBuilder result = HBaseUtil.Scanmsg("tearth", "data", start, end);
+        ResultScanner rs = HBaseUtil.Scanmsg("tearth", "data", start, end); 
+        StringBuilder result= new StringBuilder();
+          rs.forEach((Result r) -> {
+                r.listCells().forEach((Cell cell) -> {
+                    String ti = Bytes.toString(CellUtil.cloneRow(cell)).substring(11);
+                    ti = ti.substring(0, 4) + "-" + ti.substring(4, 6) + "-" + ti.substring(6, 8) + " " + ti.substring(8, 10) + ":" + ti.substring(10, 12) + ":" + "00";
+                    long time = Timestamp.valueOf(ti).getTime();
+                    result.append((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(time)).append(",").append(Bytes.toString(CellUtil.cloneValue(cell))).append("\n");
+                });
+            });
         return result;
 
     }

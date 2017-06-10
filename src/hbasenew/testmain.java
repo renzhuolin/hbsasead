@@ -5,14 +5,6 @@
  */
 package hbasenew;
 
-import hbaseadmin.HBaseJavaAPI;
-import hbasenew.file.FileSize;
-import java.io.File;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 /**
  *
  * @author 任强

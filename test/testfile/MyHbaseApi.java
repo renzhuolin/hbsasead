@@ -1,4 +1,4 @@
-package hbasenew;
+package testfile;
 
 import java.io.IOException;
 import java.util.Arrays;

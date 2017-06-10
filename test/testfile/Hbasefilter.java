@@ -1,4 +1,4 @@
-package hbasenew;
+package testfile;
 
 import java.util.Collection;
 import org.apache.hadoop.hbase.filter.*;
