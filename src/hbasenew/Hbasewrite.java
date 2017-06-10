@@ -14,9 +14,12 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
 
 public class Hbasewrite {
-
+ long totalsize=0;
+ long updatasize =0;
+    
     public void sendhbase(String path, int x) throws IOException {
         File file = new File(path);
+          FileSize filesize = new FileSize();
         if (file.isFile()) {
             try {
                 if (Post(file, x)) {
@@ -28,23 +31,29 @@ public class Hbasewrite {
                 Logger.getLogger(Hbasewrite.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
-            FileSize filesize = new FileSize();
-            long filesize1 = filesize.getfilesize(path);
-            System.out.println("文件目录" + path);
-
+         
+            totalsize = filesize.getfilesize(path);
+            System.out.println("文件目录:" + path);
             File[] fd = file.listFiles();
             System.out.println("文件总个数" + fd.length);
-            System.out.println("文件总大小" + filesize1);
+            System.out.println("文件总大小" + totalsize);
 
             for (File fd1 : fd) {
-                try {
-                    if (Post(fd1, x)) {
-                        System.out.println("文件" + fd1.getPath() + "上传成功");
-                    } else {
-                        System.out.println("文件" + fd1.getPath() + "上传失败");
+                   System.out.println("已上传"+updatasize/1024 +"总大小"+totalsize/1024 +"已上传比例"+updatasize/totalsize);
+                if (fd1.isFile()) {
+                    try {
+                        if (Post(fd1, x)) {                          
+                            updatasize += fd1.length();
+                            System.out.println("文件" + fd1.getPath() + "上传成功");
+                        } else {
+                            System.out.println("文件" + fd1.getPath() + "上传失败");
+                        }
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Hbasewrite.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Hbasewrite.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                else{
+                        sendhbase( fd1.getPath(),  x);
                 }
             }
         }
