@@ -155,6 +155,48 @@ public class Hbasewrite {
                 return false;
             }
         }
+        else if (x == 3) {
+            try {
+                if ((tempString = reader.readLine()) == null) {
+                    System.out.println("文件为空");
+                } else {
+                    String[] str = tempString.split(" ");
+                    switch (str[0].length()) {
+                        case 12: {
+                            rate = 1;
+                            msg = s[0] + s[1] + s[2] + rate;
+                            return Write_1(msg, tempString, reader);
+
+                        }
+                        case 10: {
+                            rate = 2;
+                            msg = s[0] + s[1] + s[2] + rate;
+                            return Write_1(msg, tempString, reader);
+
+                        }
+                        case 8: {
+                            rate = 3;
+                            msg = s[0] + s[1] + s[2] + rate;
+                            return Write_1(msg, tempString, reader);
+
+                        }
+                        case 14: {
+                            rate = 0;
+                            msg = s[0] + s[1] + s[2] + rate;
+                            return Write_1(msg, tempString, reader);
+
+                        }
+                        default:
+                            break;
+                    }
+                }
+
+            } catch (IOException e) {
+
+                e.printStackTrace();
+                return false;
+            }
+        }
         return false;
     }
 
@@ -306,6 +348,43 @@ public class Hbasewrite {
 
     public boolean Write_1(String rate, String tempString, BufferedReader reader) {
         String TableName = "tearth";
+        List<Put> puts = new ArrayList<>();
+        String[] str = tempString.split(" ");
+        Put put = new Put(Bytes.toBytes(rate + str[0]));
+        put.addColumn(Bytes.toBytes("data"), Bytes.toBytes("value"), Bytes.toBytes(str[1]));
+        puts.add(put);
+        try {
+            while ((tempString = reader.readLine()) != null) {
+                str = tempString.split(" ");
+                put = new Put(Bytes.toBytes(rate + str[0]));
+                put.addColumn(Bytes.toBytes("data"), Bytes.toBytes("value"), Bytes.toBytes(str[1]));
+                puts.add(put);
+
+                if (puts != null && puts.size() == 100000) {
+                    if (HBaseUtil.inserts(TableName, puts)) {
+                        puts.clear();
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            if (!puts.isEmpty()) {
+                if (HBaseUtil.inserts(TableName, puts)) {
+                    puts.clear();
+                } else {
+                    return false;
+                }
+                put = null;
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Hbasewrite.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        return true;
+
+    }
+    public boolean Write(String rate, String tempString, BufferedReader reader) {
+        String TableName = "tearth1";
         List<Put> puts = new ArrayList<>();
         String[] str = tempString.split(" ");
         Put put = new Put(Bytes.toBytes(rate + str[0]));
