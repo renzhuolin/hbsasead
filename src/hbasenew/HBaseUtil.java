@@ -33,7 +33,7 @@ public class HBaseUtil {
     // 初始化连接
     static {
         conf = HBaseConfiguration.create(); // 获得配制文件对象
-        conf.set("hbase.zookeeper.quorum", "bigdata-1,bigdata-2,bigdata-3,bigdata-4,bigdata-5,bigdata-6");
+        conf.set("hbase.zookeeper.quorum", "172.17.81.235,172.17.81.236,172.17.81.237,172.17.81.238,172.17.81.239,172.17.81.240");
         // conf.addResource("hbase-site.xml");
 
         try {
@@ -234,6 +234,7 @@ public class HBaseUtil {
             Table t = getCon().getTable(TableName.valueOf(tableName));
             Scan scan = new Scan();
             scan.setStartRow(Bytes.toBytes(sta));
+           
             scan.setStopRow(Bytes.toBytes(end));
             rs = t.getScanner(scan);
         } catch (IOException e) {

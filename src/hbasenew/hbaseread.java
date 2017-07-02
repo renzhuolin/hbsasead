@@ -105,6 +105,53 @@ public class hbaseread {
         return result;
 
     }
+    
+    
+     public static StringBuilder query4(Querymsg dbb) {
+        String start = dbb.getStarttime();
+        String end = dbb.getEndtime();
+        String item = dbb.getItem();
+        String station = dbb.getStation();
+        String stationpoint = dbb.getStationpoint();
+        String rate = dbb.getZoom();
+        boolean minColumnInclusive = true;
+        boolean maxColumnInclusive = true;
+        
+       String cstart= (new Long(start.substring(0,8))+1)+"";
+       String cend= (new Long(end.substring(0,8))-1)+"";
+       ColumnRangeFilter filter = new ColumnRangeFilter(Bytes.toBytes(start), minColumnInclusive, Bytes.toBytes(end), maxColumnInclusive);
+     
+        Result r1 = HBaseUtil.Getmsg("eardata", station + stationpoint + item + rate+start.substring(0,8), "date", filter);  
+        ResultScanner r2 = HBaseUtil.Scanmsg("eardata", "date", cstart, cend); 
+        Result r3 = HBaseUtil.Getmsg("eardata", station + stationpoint + item + rate+end.substring(0,8), "date", filter);
+    
+    
+        
+    
+        StringBuilder result = new StringBuilder();
+        StringBuilder result1 = new StringBuilder();
+        StringBuilder result2 = new StringBuilder();
+        StringBuilder result3 = new StringBuilder();
+            List<Cell> cs1 = r1.listCells();
+          cs1.forEach((Cell cell) -> {
+          String date = Bytes.toString(CellUtil.cloneQualifier(cell));
+          date = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8) + " " + date.substring(8, 10) + ":" + date.substring(10, 12) + ":" + "00";
+          long time = Timestamp.valueOf(date).getTime();
+          result1.append((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(time)).append(",").append(Bytes.toString(CellUtil.cloneValue(cell))).append("\n");
+        });
+          
+          
+          
+           List<Cell> cs3 = r1.listCells();
+          cs3.forEach((Cell cell) -> {
+          String date = Bytes.toString(CellUtil.cloneQualifier(cell));
+          date = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8) + " " + date.substring(8, 10) + ":" + date.substring(10, 12) + ":" + "00";
+          long time = Timestamp.valueOf(date).getTime();
+          result3.append((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(time)).append(",").append(Bytes.toString(CellUtil.cloneValue(cell))).append("\n");
+        });
+        return result;
+
+    }
 
     /**
      * @return the tableName
