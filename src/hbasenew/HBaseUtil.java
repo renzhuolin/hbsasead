@@ -216,7 +216,7 @@ public class HBaseUtil {
 
             Get get = new Get(Bytes.toBytes(rowKey));
             get.addFamily(Bytes.toBytes(family));
-            get.setFilter(kof);//System.out.println( "weqeqw" );
+          get.setFilter(kof);//System.out.println( "weqeqw" );
             Result r = t.get(get);//System.out.println( "qqqqq" );
             System.out.println(r.size());
 
@@ -240,6 +240,7 @@ public class HBaseUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+         System.out.println(rs.toString());
         return rs;
     }
 
