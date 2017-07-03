@@ -119,66 +119,81 @@ public class hbaseread {
         
        String cstart= (new Long(start.substring(0,8))+1)+"";  System.out.println(cstart);
        String cend= (new Long(end.substring(0,8)))+"";    System.out.println(cend);
+       
        ColumnRangeFilter filter = new ColumnRangeFilter(Bytes.toBytes(start), minColumnInclusive, Bytes.toBytes(end), maxColumnInclusive);
       System.out.println(station + stationpoint + item + rate+start.substring(0,8));
        System.out.println(station + stationpoint + item + rate+end.substring(0,8));
-        Result r1 = HBaseUtil.Getmsg("eardata", station + stationpoint + item + rate+start.substring(0,8), "date", filter);  
+
+       
+       
+        Result r1 = HBaseUtil.Getmsg("eardate", station + stationpoint + item + rate+start.substring(0,8), "date", filter);
          ResultScanner r2 = null;
         if(!cend.equals(cstart))
         {
-         r2 = HBaseUtil.Scanmsg("eardata", "date", station + stationpoint + item + rate+cstart,station + stationpoint + item + rate+ cend); 
+         r2 = HBaseUtil.Scanmsg("eardate", "date", station + stationpoint + item + rate+cstart,station + stationpoint + item + rate+ cend);
         }
-        Result r3 = HBaseUtil.Getmsg("eardata", station + stationpoint + item + rate+end.substring(0,8), "date", filter);
+        Result r3 = HBaseUtil.Getmsg("eardate", station + stationpoint + item + rate+end.substring(0,8), "date", filter);
       
-        
-        
-        
-        
+
         StringBuilder result = new StringBuilder();
-        StringBuilder result1 = new StringBuilder();
-        StringBuilder result2 = new StringBuilder();
-        StringBuilder result3 = new StringBuilder();
-            List<Cell> cs1 = r1.listCells();
-          if (cs1!=null)
-          {
-            cs1.forEach((Cell cell) -> {
-          String date = Bytes.toString(CellUtil.cloneQualifier(cell));
-          date = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8) + " " + date.substring(8, 10) + ":" +"00:" + "00";
-          long time = Timestamp.valueOf(date).getTime();
-          result1.append((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(time)).append(",").append(Bytes.toString(CellUtil.cloneValue(cell))).append("\n");
-       
-            });
-          }
-          
-          
-         if(!(r2==null))
-         {
-          r2.forEach((Result r) -> {
-                r.listCells().forEach((Cell cell) -> {
-                   String ti = Bytes.toString(CellUtil.cloneQualifier(cell));
-                   // System.out.println(Bytes.toString(CellUtil.cloneQualifier(cell)));
-                    ti = ti.substring(0, 4) + "-" + ti.substring(4, 6) + "-" + ti.substring(6, 8) + " " + ti.substring(8, 10) + ":" +"00:" + "00" ;
-                   long time = Timestamp.valueOf(ti).getTime();
-                    result2.append((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(time)).append(",").append(Bytes.toString(CellUtil.cloneValue(cell))).append("\n");
-                });
-            });
-         }
-          
-           List<Cell> cs3 = r3.listCells();
-             if (cs3!=null)
-          {  
-          cs3.forEach((Cell cell) -> {
-          String date = Bytes.toString(CellUtil.cloneQualifier(cell));
-          date = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8) + " " + date.substring(8, 10) + ":"+"00:" + "00";
-          long time = Timestamp.valueOf(date).getTime();
-          result3.append((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(time)).append(",").append(Bytes.toString(CellUtil.cloneValue(cell))).append("\n");
-        }); 
-          }
-            
-                 
-             result=result1.append(result2).append(result3);
+        StringBuilder result1 = querycl(rate,r1);
+        StringBuilder result2 = querycl(rate,r2);
+        StringBuilder result3 = querycl(rate,r3);
+        result=result1.append(result2).append(result3);
         return result;
          
+    }
+
+    public  static StringBuilder querycl(String rate,ResultScanner rt)
+    {
+        StringBuilder rs = new StringBuilder();
+        if (rt!=null) {
+            rt.forEach((Result r) -> {
+                r.listCells().forEach((Cell cell) -> {
+                    String ti = Bytes.toString(CellUtil.cloneQualifier(cell));
+            switch (rate) {
+                case "0": {
+                    ti = ti.substring(0, 4) + "-" + ti.substring(4, 6) + "-" + ti.substring(6, 8) + " " + ti.substring(8, 10) + ":" +ti.substring(10, 12) + ":" + ti.substring(12, 14);
+                }break;
+                case "1": {
+                    ti = ti.substring(0, 4) + "-" + ti.substring(4, 6) + "-" + ti.substring(6, 8) + " " + ti.substring(8, 10) + ":" + ti.substring(10, 12) + ":" + "00";
+                }break;
+                case "2": {
+                    ti = ti.substring(0, 4) + "-" + ti.substring(4, 6) + "-" + ti.substring(6, 8) + " " + ti.substring(8, 10) + ":" +"00:" + "00" ;
+                }break;
+                case "3": {ti = ti.substring(0, 4) + "-" +ti.substring(4, 6) + "-" + ti.substring(6, 8) + " 00:00:00";
+                }break;
+            }
+            long time = Timestamp.valueOf(ti).getTime();
+            rs.append((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(time)).append(",").append(Bytes.toString(CellUtil.cloneValue(cell))).append("\n");
+        });});}
+        return rs;
+    }
+
+    public  static StringBuilder querycl(String rate,Result r)
+    {
+        StringBuilder rs = new StringBuilder();
+        if (r!=null) {
+
+                r.listCells().forEach((Cell cell) -> {
+                    String ti = Bytes.toString(CellUtil.cloneQualifier(cell));
+                    switch (rate) {
+                        case "0": {
+                            ti = ti.substring(0, 4) + "-" + ti.substring(4, 6) + "-" + ti.substring(6, 8) + " " + ti.substring(8, 10) + ":" +ti.substring(10, 12) + ":" + ti.substring(12, 14);
+                        }break;
+                        case "1": {
+                            ti = ti.substring(0, 4) + "-" + ti.substring(4, 6) + "-" + ti.substring(6, 8) + " " + ti.substring(8, 10) + ":" + ti.substring(10, 12) + ":" + "00";
+                        }break;
+                        case "2": {
+                            ti = ti.substring(0, 4) + "-" + ti.substring(4, 6) + "-" + ti.substring(6, 8) + " " + ti.substring(8, 10) + ":" +"00:" + "00" ;
+                        }break;
+                        case "3": {ti = ti.substring(0, 4) + "-" +ti.substring(4, 6) + "-" + ti.substring(6, 8) + " 00:00:00";
+                        }break;
+                    }
+                    long time = Timestamp.valueOf(ti).getTime();
+                    rs.append((new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(time)).append(",").append(Bytes.toString(CellUtil.cloneValue(cell))).append("\n");
+                });}
+        return rs;
     }
 
     /**
